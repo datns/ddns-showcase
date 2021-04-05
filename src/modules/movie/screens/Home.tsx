@@ -11,19 +11,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'tomato',
   },
 });
-function HomeScreen({ navigation }: Props) {
-  const goToMovie = () => navigation.navigate('Movie');
+
+const Home = ({ navigation }: Props) => {
+  const onPress = () => navigation.navigate('MovieDetail');
   return (
     <View style={styles.container}>
-      <Text>HomeScreen</Text>
-      <TouchableOpacity onPress={goToMovie}>
-        <Text>Movie App</Text>
+      <Text>Home</Text>
+      <TouchableOpacity onPress={onPress}>
+        <Text>Navigate to Movie Detail</Text>
       </TouchableOpacity>
     </View>
   );
-}
+};
 
-export default HomeScreen;
+export default Home;
