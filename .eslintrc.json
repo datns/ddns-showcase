@@ -2,11 +2,11 @@
   "extends": [
     "airbnb",
     "airbnb/hooks",
-    "plugin:@typescript-eslint/recommended",
     "prettier",
     "prettier/react",
     "prettier/@typescript-eslint",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   "plugins": ["@typescript-eslint", "react", "prettier"],
   "parser": "@typescript-eslint/parser",
@@ -37,8 +37,8 @@
     ],
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
+    "@typescript-eslint/no-unused-vars": "error",
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["error"],
     "import/extensions": ["error", "never"],
     "react/prop-types": 0,
     "no-shadow": "off",
