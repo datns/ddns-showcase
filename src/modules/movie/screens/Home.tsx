@@ -13,7 +13,14 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ListRenderItem,
 } from 'react-native';
-import Animated from 'react-native-reanimated';
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useAnimatedScrollHandler,
+  useSharedValue,
+  useAnimatedStyle,
+  interpolateColor,
+} from 'react-native-reanimated';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 
@@ -104,10 +111,26 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     ...FONTS.h3,
   },
+  dotsContainer: {
+    marginTop: SIZES.padding,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dot: {
+    borderRadius: SIZES.radius,
+    marginHorizontal: 3,
+    height: 6,
+  },
 });
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 const Home = ({}: Props) => {
+  const translationX = useSharedValue(0);
+  const scrollHandler = useAnimatedScrollHandler(event => {
+    translationX.value = event.contentOffset.x;
+  });
+
   function renderHeader() {
     return (
       <View style={styles.header}>
@@ -183,12 +206,57 @@ const Home = ({}: Props) => {
         }}
         data={data}
         keyExtractor={item => `${item.id}`}
-        onScroll={() => {}}
+        onScroll={scrollHandler}
         renderItem={renderThumbnailItem}
       />
     );
   }
   // const onPress = () => navigation.navigate('MovieDetail');
+
+  const renderDots = () => {
+    return (
+      <View style={styles.dotsContainer}>
+        {dummyData.newSeason.map((_, index) => {
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          const dotStyles = useAnimatedStyle(() => {
+            const dotPosition = translationX.value / SIZES.width;
+
+            const opacity = interpolate(
+              dotPosition,
+              [index - 1, index, index + 1],
+              [0.3, 1, 0.3],
+              Extrapolate.CLAMP,
+            );
+
+            const dotWidth = interpolate(
+              dotPosition,
+              [index - 1, index, index + 1],
+              [6, 20, 6],
+              Extrapolate.CLAMP,
+            );
+
+            const dotColor = interpolateColor(
+              dotPosition,
+              [index - 1, index, index + 1],
+              [COLORS.lightGray, COLORS.primary, COLORS.lightGray],
+            );
+            return {
+              opacity,
+              width: dotWidth,
+              backgroundColor: dotColor,
+            };
+          });
+
+          return (
+            <Animated.View
+              key={`dot-${index}`}
+              style={[styles.dot, dotStyles]}
+            />
+          );
+        })}
+      </View>
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
       {renderHeader()}
@@ -197,6 +265,7 @@ const Home = ({}: Props) => {
           paddingBottom: 100,
         }}>
         {renderNewSeasonSection()}
+        {renderDots()}
       </ScrollView>
     </SafeAreaView>
   );
