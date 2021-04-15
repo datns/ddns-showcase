@@ -33,7 +33,7 @@ import {
   images,
 } from '../../../constants';
 
-import { Profiles } from '../components/';
+import { Profiles, ProgressBar } from '../components/';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Movie } from '../types';
 
@@ -122,10 +122,38 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
     height: 6,
   },
+  continueThumbnail: {
+    width: SIZES.width / 3,
+    height: SIZES.width / 3 + 60,
+    borderRadius: 20,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: SIZES.padding,
+    alignItems: 'center',
+  },
+  title: {
+    flex: 1,
+    color: COLORS.white,
+    ...FONTS.h2,
+  },
+  nextBtn: {
+    width: 20,
+    height: 20,
+    tintColor: COLORS.primary,
+  },
+  movieName: {
+    marginTop: SIZES.base,
+    color: COLORS.white,
+    ...FONTS.h4,
+  },
+  bar: {
+    height: 3,
+  },
 });
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
-const Home = ({}: Props) => {
+const Home = ({ navigation }: Props) => {
   const translationX = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler(event => {
     translationX.value = event.contentOffset.x;
@@ -211,7 +239,6 @@ const Home = ({}: Props) => {
       />
     );
   }
-  // const onPress = () => navigation.navigate('MovieDetail');
 
   const renderDots = () => {
     return (
@@ -257,6 +284,68 @@ const Home = ({}: Props) => {
       </View>
     );
   };
+
+  const renderContinueWatchingSection = () => {
+    return (
+      <View
+        style={{
+          marginTop: SIZES.padding,
+        }}>
+        {/*Header*/}
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Continue Watching</Text>
+          <Image source={icons.right_arrow} style={styles.nextBtn} />
+        </View>
+
+        {/*List*/}
+        <FlatList
+          data={dummyData.continueWatching}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            marginTop: SIZES.padding,
+          }}
+          keyExtractor={item => `${item.id}`}
+          renderItem={({ item, index }) => {
+            return (
+              <TouchableWithoutFeedback
+                onPress={() =>
+                  navigation.navigate('MovieDetail', {
+                    selectedMovie: item,
+                  })
+                }>
+                <View
+                  style={{
+                    marginLeft: index === 0 ? SIZES.padding : 20,
+                    marginRight:
+                      index === dummyData.continueWatching.length - 1
+                        ? SIZES.padding
+                        : 0,
+                  }}>
+                  {/*Thumbnail*/}
+                  <Image
+                    source={item.thumbnail}
+                    resizeMode="cover"
+                    style={styles.continueThumbnail}
+                  />
+                  {/*Name*/}
+                  <Text style={styles.movieName}>{item.name}</Text>
+                  {/*Progress Bar*/}
+                  <ProgressBar
+                    containerStyle={{
+                      marginTop: SIZES.radius,
+                    }}
+                    barStyle={styles.bar}
+                    percentage={item.overallProgress}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
+            );
+          }}
+        />
+      </View>
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
       {renderHeader()}
@@ -266,6 +355,7 @@ const Home = ({}: Props) => {
         }}>
         {renderNewSeasonSection()}
         {renderDots()}
+        {renderContinueWatchingSection()}
       </ScrollView>
     </SafeAreaView>
   );
