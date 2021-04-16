@@ -1,13 +1,32 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  createStackNavigator,
+  TransitionPresets,
+} from '@react-navigation/stack';
 
 import Home from '../screens/Home';
 import { COLORS, icons } from '../../../constants';
 
 import { TabIcon } from '../components';
+import MovieDetail from '../screens/MovieDetail';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
+const AppStack = () => {
+  return (
+    <Stack.Navigator
+      headerMode="none"
+      initialRouteName="Tabs"
+      screenOptions={{
+        ...TransitionPresets.SlideFromRightIOS,
+      }}>
+      <Stack.Screen name="Tabs" component={Tabs} />
+      <Stack.Screen name="MovieDetail" component={MovieDetail} />
+    </Stack.Navigator>
+  );
+};
 const Tabs = () => {
   return (
     <Tab.Navigator
@@ -64,4 +83,4 @@ const Tabs = () => {
   );
 };
 
-export default Tabs;
+export default AppStack;
