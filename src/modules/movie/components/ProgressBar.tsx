@@ -11,9 +11,6 @@ interface Props {
 
 const styles = StyleSheet.create({
   barContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
     marginTop: SIZES.base,
     backgroundColor: COLORS.gray,
   },
@@ -28,7 +25,7 @@ const styles = StyleSheet.create({
 
 const ProgressBar = ({ containerStyle, barStyle, percentage }: Props) => {
   return (
-    <View style={containerStyle}>
+    <View style={[containerStyle]}>
       <View style={[styles.barContainer, barStyle]} />
 
       <View style={[barStyle, styles.bar, { width: percentage }]} />
